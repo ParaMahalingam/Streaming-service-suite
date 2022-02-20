@@ -9,7 +9,7 @@ var obj;
 fs.readFile('stuff.json', 'utf8', function (err, data) {
   if (err) throw err;
   obj = JSON.parse(data);
-  console.log(obj);
+//   console.log(obj);
 });
 
 app.use(cors());
@@ -42,6 +42,7 @@ router.get('/test', function (req, res) {
 router.get('/search', async function (req, res) {
 
     let searchKeyword = req.query.keyword;
+    let searchType = req.query.type;
     let page = req.query.page;
     if (searchKeyword) {
         var options = {
@@ -51,7 +52,7 @@ router.get('/search', async function (req, res) {
                 country: 'gb',
                 service: 'netflix',
                 // service: 'netflix,prime,disney,apple,britbox',
-                type: 'movie',
+                type: searchType,
                 order_by: 'original_title',
                 page: page,
                 desc: 'true',
