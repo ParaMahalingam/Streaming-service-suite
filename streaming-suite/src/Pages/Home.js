@@ -9,7 +9,7 @@ function Home() {
 
     async function fetchResults() {
         try {
-            const response = await axios.get("http://localhost:3090/api/test")
+            const response = await axios.get("http://localhost:3090/api/search?keyword=Netflix")
             setResults((response.data.results))
         } catch (error) {
             console.error(error);
@@ -31,10 +31,11 @@ function Home() {
             
             <Row xs={1} md={4} className="g-4">
                 {results.map((result) => (
+
                     <Col>
                         <Card className="card h-100">
                             <CardHeader>{result.title}</CardHeader>
-                            <CardImg className="h-100" top src={result.posterURLs[500]} />
+                            <CardImg className="h-100" top src={result.posterURLs[500] ?? "https://www.instandngs4p.eu/wp-content/themes/fox/images/placeholder.jpg"} />
                             <CardBody>
                                 {/* <CardTitle><strong>{result.title}</strong></CardTitle> */}
                                 {/* <CardSubtitle><strong>Description</strong></CardSubtitle> */}
@@ -42,6 +43,7 @@ function Home() {
                                 <Button>Button</Button>
                             </CardBody>
                         </Card>
+                        {console.log(result)}
                     </Col>
                 ))}
 
