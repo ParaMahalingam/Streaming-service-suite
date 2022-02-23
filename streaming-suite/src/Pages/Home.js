@@ -1,5 +1,7 @@
 import { Card, CardTitle, CardBody, CardText, Col, Row, Container, CardImg, CardSubtitle, CardHeader, CardFooter } from "reactstrap";
-import { Button, Form, Pagination } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
+// import Pagination from "react-bootstrap-4-pagination";
+import Pagination from "@vlsergey/react-bootstrap-pagination"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 const axios = require('axios');
@@ -7,6 +9,8 @@ const axios = require('axios');
 function Home() {
     const [results, setResults] = useState([]);
     const [keyword, setKeyword] = useState("Netflix");
+    const [totalPages, setTotalPages] = useState(1);
+    const [page, setPage] = useState(1);
     const [MovieSeriesSelect, setMovieSeriesSelect] = useState("movie");
 
     const handleSearch = e => {
@@ -17,30 +21,38 @@ function Home() {
         setMovieSeriesSelect(e.target.value);
     };
 
+    const handlePaginationChange = e => {
+        setPage(e.target.value);
+        window.scrollTo(0, 0);
+    };
+
 
     const fetchResults = async e => {
+        // console.log(totalPages)
         if (e) {
             e.preventDefault();
+            setPage(1);
         }
 
         try {
-            const response = await axios.get("http://localhost:3090/api/search", { params: { keyword: keyword, type: MovieSeriesSelect.toLocaleLowerCase() } });
+            const response = await axios.get("http://localhost:3090/api/search", { params: { keyword: keyword, type: MovieSeriesSelect.toLocaleLowerCase(), page: page } });
             setResults((response.data.results))
+            if (response.data.total_pages === 0) {
+                setTotalPages(1);
+            }
+            else {
+                setTotalPages((response.data.total_pages))
+
+            }
         } catch (error) {
             console.error(error);
         }
 
     };
-    // async function fetchResultsFirstTime() {
-    //     try {
-    //         const response = await axios.get("http://localhost:3090/api/search?keyword=" + keyword)
-    //         setResults((response.data.results))
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
 
-    useEffect(() => fetchResults(), []);
+
+    // useEffect(() => fetchResults(), []);
+    useEffect(() => fetchResults(), [page]);
 
     return (
         <Container className="p-3">
@@ -99,8 +111,11 @@ function Home() {
                 ))}
 
             </Row>
-
-
+            <br />
+            <div className="d-flex justify-content-center">
+                {/* <Pagination {...paginationConfig} /> */}
+                <Pagination firstPageValue={1} value={page} totalPages={totalPages} onChange={handlePaginationChange} />
+            </div>
         </Container >
 
     );
