@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import React from "react";
 import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink, NavbarText } from "reactstrap";
-const Navigation = () => {
+function Navigation() {
     const [isOpen, setIsOpen] = React.useState(false);
     let navigate = useNavigate();
 
@@ -18,6 +18,10 @@ const Navigation = () => {
                 <Collapse isOpen={isOpen} navbar>
                     <Nav className="me-auto" navbar>
                         <NavItem><NavLink href="/">Home</NavLink></NavItem>
+                        <NavItem><NavLink href="/watchlist">My Watchlist</NavLink></NavItem>
+                        <NavItem><NavLink href="/admin">Admin</NavLink></NavItem>
+                        <NavItem><NavLink href="/login">Login</NavLink></NavItem>
+                        <NavItem><NavLink href="/register">Register</NavLink></NavItem>
                     </Nav>
                 </Collapse>
 

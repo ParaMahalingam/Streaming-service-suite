@@ -4,6 +4,7 @@ import { Button, Form } from "react-bootstrap";
 import Pagination from "@vlsergey/react-bootstrap-pagination"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DisplayContent from "../Components/DisplayContent";
 const axios = require('axios');
 
 function Home() {
@@ -56,6 +57,7 @@ function Home() {
 
     return (
         <Container className="p-3">
+            {/* <DisplayContent/> */}
             <Row>
                 <Form onSubmit={fetchResults}>
                     <Row className="justify-content-center">
