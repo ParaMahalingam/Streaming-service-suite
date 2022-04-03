@@ -44,13 +44,15 @@ router.get('/search', async function (req, res) {
     let searchKeyword = req.query.keyword;
     let searchType = req.query.type;
     let page = req.query.page;
+    let platform = req.query.platform;
+
     if (searchKeyword) {
         var options = {
             method: 'GET',
             url: 'https://streaming-availability.p.rapidapi.com/search/pro',
             params: {
                 country: 'gb',
-                service: 'netflix',
+                service: platform,
                 // service: 'netflix,prime,disney,apple,britbox',
                 type: searchType,
                 order_by: 'original_title',

@@ -1,18 +1,26 @@
 import { Card, CardTitle, CardBody, CardText, Col, Row, Container, CardImg, CardSubtitle, CardHeader, CardFooter } from "reactstrap";
+
+import { Modal, Image } from "react-bootstrap";
+
 import { Button, Form } from "react-bootstrap";
 // import Pagination from "react-bootstrap-4-pagination";
 import Pagination from "@vlsergey/react-bootstrap-pagination"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DisplayContent from "../Components/DisplayContent";
 const axios = require('axios');
 
 function Home() {
     const [results, setResults] = useState([]);
-    const [keyword, setKeyword] = useState("Netflix");
+    const [keyword, setKeyword] = useState("Alex");
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [MovieSeriesSelect, setMovieSeriesSelect] = useState("movie");
+    const [MovieSeriesSelect, setMovieSeriesSelect] = useState("Movie");
+    const [PlatformSelect, setPlatformSelect] = useState("Netflix");
+    const [show, setShow] = useState(false);
+    const [CurrentContent, setCurrentContent] = useState();
+
+
+    const handleClose = () => setShow(false);
 
     const handleSearch = e => {
         setKeyword(e.target.value);
@@ -20,6 +28,10 @@ function Home() {
 
     const handleMovieSeriesSelect = e => {
         setMovieSeriesSelect(e.target.value);
+    };
+
+    const handlePlatformSelect = e => {
+        setPlatformSelect(e.target.value);
     };
 
     const handlePaginationChange = e => {
@@ -36,7 +48,7 @@ function Home() {
         }
 
         try {
-            const response = await axios.get("http://localhost:3090/api/search", { params: { keyword: keyword, type: MovieSeriesSelect.toLocaleLowerCase(), page: page } });
+            const response = await axios.get("http://localhost:3090/api/search", { params: { keyword: keyword, platform: PlatformSelect.toLocaleLowerCase(), type: MovieSeriesSelect.toLocaleLowerCase(), page: page } });
             setResults((response.data.results))
             if (response.data.total_pages === 0) {
                 setTotalPages(1);
@@ -51,13 +63,67 @@ function Home() {
 
     };
 
-
-    // useEffect(() => fetchResults(), []);
     useEffect(() => fetchResults(), [page]);
+
+
+    function displayModal(content) {
+        setCurrentContent(content)
+        setShow(true)
+    }
+
+    function renderPlatforms(platform, info) {
+        console.log(info.link)
+        switch (platform) {
+            case 'netflix':
+                return <Col><Button variant="outline-danger" onClick={() => { window.open(info.link, "_blank") }}>Netflix</Button></Col>;
+            case 'prime':
+                return <Col><Button variant="outline-info" onClick={() => { window.open(info.link, "_blank") }}>Prime</Button></Col>;
+            case 'disney':
+                return <Col><Button variant="outline-primary" onClick={() => { window.open(info.link, "_blank") }}>Disney</Button></Col>;
+            case 'apple':
+                return <Col><Button variant="outline-secondary" onClick={() => { window.open(info.link, "_blank") }}>Apple</Button></Col>;
+            case 'britbox':
+                return <Col><Button variant="outline-warning" onClick={() => { window.open(info.link, "_blank") }}>Britbox</Button></Col>;
+        }
+    }
+
+    function DisplayContents() {
+        return (
+            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{CurrentContent.title}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="show-grid">
+                    <Container>
+                        <Row>
+                            <Col><Image className="img-fluid" src={CurrentContent.posterURLs[500]} rounded /></Col>
+                            <Col>{CurrentContent.overview}</Col>
+                        </Row>
+                        <br />
+                        <strong className="d-flex justify-content-center">STREAMING PLATFORM</strong><br />
+                        <div className="d-flex justify-content-center">
+                            <Row>
+                                {Object.keys(CurrentContent.streamingInfo).map((key, i) => (
+                                    <>
+                                        {renderPlatforms(key, CurrentContent.streamingInfo[key].gb)}
+                                    </>
+                                ))}
+                            </Row>
+                        </div>
+                    </Container>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary">Add to Watchlist</Button>
+                    {/* <Button variant="secondary" onClick={handleClose}>Close</Button> */}
+                </Modal.Footer>
+            </Modal>
+        );
+    }
+
+
 
     return (
         <Container className="p-3">
-            {/* <DisplayContent/> */}
             <Row>
                 <Form onSubmit={fetchResults}>
                     <Row className="justify-content-center">
@@ -75,47 +141,45 @@ function Home() {
                                 <option>Series</option>
                             </Form.Select>
                         </Col>
+                    </Row>
 
-
+                    <Row className="justify-content-center">
+                        <Col sm={2}>
+                            <Form.Select size="lg" onChange={handlePlatformSelect}>
+                                <option>Netflix</option>
+                                <option>Prime</option>
+                                <option>Disney</option>
+                                <option>Apple</option>
+                                <option>Britbox</option>
+                            </Form.Select>
+                        </Col>
 
                         <Col sm={1}>
                             <Button size="lg" variant="primary" type="submit" value="Submit">Submit</Button>
                         </Col>
                     </Row>
-
+                    <br />
                 </Form>
             </Row>
 
             <Row xs={1} md={4} className="g-4">
                 {results.map((result) => (
-
                     <Col>
                         <Card className="card h-100">
                             <CardHeader>{result.title}</CardHeader>
                             <CardImg className="h-100" top src={result.posterURLs[500] ?? "https://www.instandngs4p.eu/wp-content/themes/fox/images/placeholder.jpg"} />
                             <CardBody>
-                                {/* <CardTitle><strong>{result.title}</strong></CardTitle> */}
-                                {/* <CardSubtitle><strong>Description</strong></CardSubtitle> */}
-                                {/* <CardText>{result.overview}</CardText> */}
-                                <Button>Button</Button>
+                                <Button variant="primary" onClick={() => { displayModal(result) }}>View</Button>
                             </CardBody>
                             <CardFooter>
-                                {/* {
-                                     result.streamingInfo
-                                } */}
-                                {/* {result.streamingInfo().map((x) => (
-                                    console.log(x)
-                                ))} */}
                             </CardFooter>
                         </Card>
-                        {console.log(result.streamingInfo)}
                     </Col>
                 ))}
-
+                {CurrentContent && <DisplayContents />}
             </Row>
             <br />
             <div className="d-flex justify-content-center">
-                {/* <Pagination {...paginationConfig} /> */}
                 <Pagination firstPageValue={1} value={page} totalPages={totalPages} onChange={handlePaginationChange} />
             </div>
         </Container >
