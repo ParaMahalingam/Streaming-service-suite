@@ -1,12 +1,7 @@
 import { Card, CardTitle, CardBody, CardText, Col, Row, Container, CardImg, CardSubtitle, CardHeader, CardFooter } from "reactstrap";
-
-import { Modal, Image } from "react-bootstrap";
-
-import { Button, Form } from "react-bootstrap";
-// import Pagination from "react-bootstrap-4-pagination";
+import { Button, Form, Modal, Image } from "react-bootstrap";
 import Pagination from "@vlsergey/react-bootstrap-pagination"
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 const axios = require('axios');
 
 function Home() {
@@ -41,7 +36,6 @@ function Home() {
 
 
     const fetchResults = async e => {
-        // console.log(totalPages)
         if (e) {
             e.preventDefault();
             setPage(1);
@@ -63,7 +57,19 @@ function Home() {
 
     };
 
-    useEffect(() => fetchResults(), [page]);
+    async function addToWatchlist(title, platform, link, poster, description, userid) {
+        try {
+            const response = await axios.post("http://localhost:3090/api/watchlist/add", { Title: title, Platform: platform, Link: link, Poster: poster, Description: description, UserID: userid })
+            if (response.data.insertID) {
+                alert("Done!")
+            }
+            else {
+                alert("There was an error!")
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
 
     function displayModal(content) {
@@ -113,21 +119,20 @@ function Home() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary">Add to Watchlist</Button>
-                    {/* <Button variant="secondary" onClick={handleClose}>Close</Button> */}
+                    <Button variant="primary" onClick={() => { addToWatchlist(CurrentContent.title, Object.keys(CurrentContent.streamingInfo)[0], CurrentContent.streamingInfo[Object.keys(CurrentContent.streamingInfo)[0]].gb.link, CurrentContent.posterURLs[500], CurrentContent.overview, 1) }}>Add to Watchlist</Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal >
         );
     }
 
-
+    useEffect(() => fetchResults(), [page]);
 
     return (
         <Container className="p-3">
             <Row>
                 <Form onSubmit={fetchResults}>
                     <Row className="justify-content-center">
-                        <Col sm={8}>
+                        <Col sm={4}>
                             <Form.Group className="mb-3">
                                 {/* <Form.Label>Search</Form.Label> */}
                                 <Form.Control required onChange={handleSearch} value={keyword} type="text" size="lg" placeholder="Search a movie..." />
@@ -135,23 +140,26 @@ function Home() {
                             </Form.Group>
                         </Col>
 
-                        <Col sm={2}>
-                            <Form.Select size="lg" onChange={handleMovieSeriesSelect}>
-                                <option>Movie</option>
-                                <option>Series</option>
-                            </Form.Select>
+                        <Col sm={3}>
+                            <Form.Group className="mb-3">
+                                <Form.Select size="lg" onChange={handleMovieSeriesSelect}>
+                                    <option>Movie</option>
+                                    <option>Series</option>
+                                </Form.Select>
+                            </Form.Group>
                         </Col>
-                    </Row>
 
-                    <Row className="justify-content-center">
-                        <Col sm={2}>
-                            <Form.Select size="lg" onChange={handlePlatformSelect}>
-                                <option>Netflix</option>
-                                <option>Prime</option>
-                                <option>Disney</option>
-                                <option>Apple</option>
-                                <option>Britbox</option>
-                            </Form.Select>
+
+                        <Col sm={3}>
+                            <Form.Group className="mb-3">
+                                <Form.Select size="lg" onChange={handlePlatformSelect}>
+                                    <option>Netflix</option>
+                                    <option>Prime</option>
+                                    <option>Disney</option>
+                                    <option>Apple</option>
+                                    <option>Britbox</option>
+                                </Form.Select>
+                            </Form.Group>
                         </Col>
 
                         <Col sm={1}>

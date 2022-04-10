@@ -5,7 +5,7 @@ import Admin from "./Pages/Admin";
 import Home from './Pages/Home';
 import Login from "./Pages/Login";
 import Navigation from "./Pages/Navigation";
-import Register from "./Pages/Register";
+import Chat from "./Pages/Chat";
 import Watchlist from "./Pages/Watchlist";
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
           <Route path="watchlist" element={<Watchlist />} />
           <Route path="admin" element={<Admin />} />
           <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+          <Route path="chat" element={<Chat />} />
           <Route path="*" element={<p>Page does not exist</p>} />
         </Route>
       </Routes>

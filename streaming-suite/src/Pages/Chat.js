@@ -2,14 +2,14 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 import React from "react";
 
 
-function Register() {
+function Chat() {
 
     return (
         <div>
-            hi, you are in register page
+            hi, you are in chat page
         </div>
 
     )
 };
 
-export default Register;
+export default Chat;

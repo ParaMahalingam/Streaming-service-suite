@@ -21,7 +21,7 @@ function Navigation() {
                         <NavItem><NavLink href="/watchlist">My Watchlist</NavLink></NavItem>
                         <NavItem><NavLink href="/admin">Admin</NavLink></NavItem>
                         <NavItem><NavLink href="/login">Login</NavLink></NavItem>
-                        <NavItem><NavLink href="/register">Register</NavLink></NavItem>
+                        <NavItem><NavLink href="/chat">Chat</NavLink></NavItem>
                     </Nav>
                 </Collapse>
 
