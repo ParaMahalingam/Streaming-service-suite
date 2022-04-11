@@ -25,6 +25,18 @@ function Login(LoginInfo, callback) {
     });
 }
 
+//MySQL statement for creating a new watchlist content
+function addUser(data, callback) {
+    con.query("INSERT INTO User SET ?", data, function (err, result) {
+        if (err) {
+            console.log(err);
+            callback("There was an error!");
+        } else {
+            callback(result.insertId);
+        }
+    });
+}
+
 function updateBan(BanType, UserID, callback) {
     console.log(UserID)
     con.query(
@@ -92,20 +104,60 @@ function getWatchList(id, callback) {
 //MySQL statement for creating a new watchlist content
 function addWatchList(data, callback) {
     con.query("INSERT INTO WatchList SET ?", data, function (err, result) {
-      if (err) {
-        console.log(err);
-        callback("There was an error!");
-      } else {
-        callback(result.insertId);
-      }
+        if (err) {
+            console.log(err);
+            callback("There was an error!");
+        } else {
+            callback(result.insertId);
+        }
     });
-  }
+}
+
+//MySQL statement for creating a new Advertisement
+function addAds(data, callback) {
+    con.query("INSERT INTO Advertisement SET ?", data, function (err, result) {
+        if (err) {
+            console.log(err);
+            callback("There was an error!");
+        } else {
+            callback(result.insertId);
+        }
+    });
+}
 
 //delete a title
 function deleteTitle(ID, callback) {
     con.query(
         "DELETE FROM WatchList WHERE ID = ?", [ID], function (err, result) {
             if (err) {
+                callback("There was an error!");
+            } else {
+                callback(result.affectedRows);
+            }
+        }
+    );
+}
+
+//delete a user
+function deleteUser(ID, callback) {
+    con.query(
+        "DELETE FROM User WHERE ID = ?", [ID], function (err, result) {
+            if (err) {
+                console.log(err)
+                callback("There was an error!");
+            } else {
+                callback(result.affectedRows);
+            }
+        }
+    );
+}
+
+//delete an ad
+function deleteAd(ID, callback) {
+    con.query(
+        "DELETE FROM Advertisement WHERE ID = ?", [ID], function (err, result) {
+            if (err) {
+                console.log(err)
                 callback("There was an error!");
             } else {
                 callback(result.affectedRows);
@@ -130,9 +182,13 @@ module.exports = {
     Login,
     getWatchList,
     deleteTitle,
+    deleteUser,
     markAsSeen,
+    addUser,
+    deleteAd,
     updatePassword,
     addWatchList,
+    addAds,
     updateBan,
     getUsers,
     getAdvertisement

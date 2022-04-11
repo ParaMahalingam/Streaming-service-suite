@@ -57,11 +57,11 @@ function Home() {
 
     };
 
-    async function addToWatchlist(title, platform, link, poster, description, userid) {
+    async function addToWatchlist(title, platform, link, poster, description) {
         try {
-            const response = await axios.post("http://localhost:3090/api/watchlist/add", { Title: title, Platform: platform, Link: link, Poster: poster, Description: description, UserID: userid })
+            const response = await axios.post("http://localhost:3090/api/watchlist/add", { Title: title, Platform: platform, Link: link, Poster: poster, Description: description, UserID: localStorage.getItem('ID') })
             if (response.data.insertID) {
-                alert("Done!")
+                alert("Added to watchlist!")
             }
             else {
                 alert("There was an error!")
@@ -119,7 +119,7 @@ function Home() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={() => { addToWatchlist(CurrentContent.title, Object.keys(CurrentContent.streamingInfo)[0], CurrentContent.streamingInfo[Object.keys(CurrentContent.streamingInfo)[0]].gb.link, CurrentContent.posterURLs[500], CurrentContent.overview, 1) }}>Add to Watchlist</Button>
+                    <Button variant="primary" onClick={() => { addToWatchlist(CurrentContent.title, Object.keys(CurrentContent.streamingInfo)[0], CurrentContent.streamingInfo[Object.keys(CurrentContent.streamingInfo)[0]].gb.link, CurrentContent.posterURLs[500], CurrentContent.overview) }}>Add to Watchlist</Button>
                 </Modal.Footer>
             </Modal >
         );
@@ -134,7 +134,6 @@ function Home() {
                     <Row className="justify-content-center">
                         <Col sm={4}>
                             <Form.Group className="mb-3">
-                                {/* <Form.Label>Search</Form.Label> */}
                                 <Form.Control required onChange={handleSearch} value={keyword} type="text" size="lg" placeholder="Search a movie..." />
 
                             </Form.Group>
@@ -171,8 +170,8 @@ function Home() {
             </Row>
 
             <Row xs={1} md={4} className="g-4">
-                {results.map((result) => (
-                    <Col>
+                {results.map((result, i) => (
+                    <Col key={i}>
                         <Card className="card h-100">
                             <CardHeader>{result.title}</CardHeader>
                             <CardImg className="h-100" top src={result.posterURLs[500] ?? "https://www.instandngs4p.eu/wp-content/themes/fox/images/placeholder.jpg"} />

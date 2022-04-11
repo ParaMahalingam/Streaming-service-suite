@@ -5,6 +5,48 @@ function Navigation() {
     const [isOpen, setIsOpen] = React.useState(false);
     let navigate = useNavigate();
 
+    function clearStorage() {
+        localStorage.clear()
+        navigate("/login")
+
+    }
+    function loginButton() {
+        if (localStorage.getItem('loggedIn') !== null) {
+            return (
+                <NavbarText>
+                    <button type='button' className='btn btn-outline-dark' onClick={clearStorage}>Log Out</button>
+                </NavbarText>
+            )
+        }
+        else {
+            return (
+                <NavbarText>
+                    <Link to='/login'>
+                        <button type='button' className='btn btn-outline-dark'>Login</button>
+                    </Link>
+                </NavbarText>
+            )
+        }
+    }
+
+    function loggedIn() {
+        if (localStorage.getItem('loggedIn') !== null) {
+            return (
+                <>
+                    <NavItem><NavLink href="/watchlist">My Watchlist</NavLink></NavItem>
+                </>
+            )
+        }
+    }
+
+    function AdminUser() {
+        if (localStorage.getItem('Role') === "Admin") {
+            return (
+                <NavItem><NavLink href="/admin">Admin</NavLink></NavItem>
+            )
+        }
+    }
+
     return (
         <div>
             <Navbar
@@ -18,16 +60,15 @@ function Navigation() {
                 <Collapse isOpen={isOpen} navbar>
                     <Nav className="me-auto" navbar>
                         <NavItem><NavLink href="/">Home</NavLink></NavItem>
-                        <NavItem><NavLink href="/watchlist">My Watchlist</NavLink></NavItem>
-                        <NavItem><NavLink href="/admin">Admin</NavLink></NavItem>
-                        <NavItem><NavLink href="/login">Login</NavLink></NavItem>
-                        <NavItem><NavLink href="/chat">Chat</NavLink></NavItem>
+                        {loggedIn()}
+                        {AdminUser()}
                     </Nav>
                 </Collapse>
 
-            </Navbar>
+                {loginButton()}
+            </Navbar >
             <Outlet />
-        </div>
+        </div >
 
     )
 };

@@ -14,6 +14,7 @@ var Database = require('./database')
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+
 var port = process.env.PORT || 3090; //Backend server port
 
 // ROUTES FOR OUR API
@@ -29,7 +30,7 @@ router.get('/', function (req, res) {
 // more routes for our API will happen here
 
 //get all advertisements
-router.get('/ads', function (req, res) {
+router.get('/advert/all', function (req, res) {
     Database.getAdvertisement(function (result) {
         res.send(result);
     });
@@ -42,22 +43,32 @@ router.get('/users', function (req, res) {
     });
 })
 
+
 router.post("/watchlist/add", (req, res) => {
     var watchlist = req.body;
-  
-    Database.addWatchList(watchlist, function (result) {
-      console.log(result);
-      res.send({ insertID: result });
-    });
-  });
 
-  router.post("/updatepassword", (req, res) => {
+    Database.addWatchList(watchlist, function (result) {
+        console.log(result);
+        res.send({ insertID: result });
+    });
+});
+
+router.post("/advert/add", (req, res) => {
+    var ads = req.body;
+
+    Database.addAds(ads, function (result) {
+        console.log(result);
+        res.send({ insertID: result });
+    });
+});
+
+router.post("/user/updatepassword", (req, res) => {
     var UpdatePassword = req.body;
-  
+
     Database.updatePassword(UpdatePassword, function (result) {
         res.send({ completed: true });
     });
-  });
+});
 
 
 //get Watchlist by User ID
@@ -87,7 +98,7 @@ router.get('/watchlist/seen/:id', function (req, res) {
     });
 })
 
-router.get("/ban", function (req, res) {
+router.get("/user/ban", function (req, res) {
     var BanType = req.query.BanType
     var UserID = req.query.UserID
     console.log(UserID)
@@ -97,9 +108,26 @@ router.get("/ban", function (req, res) {
     });
 });
 
+//delete a user
+router.get('/user/delete/:id', function (req, res) {
+    var ID = req.params.id;
+
+    Database.deleteUser(ID, function (result) {
+        res.send({ completed: true });
+    });
+})
+
+//delete an ad
+router.get('/advert/delete/:id', function (req, res) {
+    var ID = req.params.id;
+
+    Database.deleteAd(ID, function (result) {
+        res.send({ completed: true });
+    });
+})
 
 //Login user
-router.post("/login", function (req, res) {
+router.post("/user/login", function (req, res) {
     var LoginInfo = req.body;
     Database.Login(LoginInfo, function (result) {
         if (result.length > 0) {
@@ -113,6 +141,16 @@ router.post("/login", function (req, res) {
         } else {
             res.send({ loggedIn: false });
         }
+    });
+});
+
+//Add new user
+router.post("/user/add", (req, res) => {
+    var userData = req.body;
+
+    Database.addUser(userData, function (result) {
+        console.log(result);
+        res.send({ insertID: result });
     });
 });
 

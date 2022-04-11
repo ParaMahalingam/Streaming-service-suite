@@ -1,18 +1,25 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { Container, Table, Input, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, Button, Label, FormGroup } from 'reactstrap';
+import { Image } from "react-bootstrap";
 import { useEffect, useState } from "react";
 const axios = require('axios');
 
 function Admin() {
-
+    let navigate = useNavigate();
+    const [ads, setAds] = useState([]);
     const [userList, setUserList] = useState([]);
     const [filtereduserlist, setFilteredUserList] = useState([]);
     const [username, setUsername] = useState('')
     const [passwordChangeUserID, setPasswordChangeUserID] = useState('')
     const [password, setPassword] = useState('')
     const [show, setShow] = useState(false);
+    const [adshow, setadShow] = useState(false);
+    const [adTitle, setadTitle] = useState('')
+    const [adImage, setadImage] = useState('')
+    const [adDescription, setadDescription] = useState('')
 
     const handleModal = () => setShow(!show);
+    const handleadModal = () => setadShow(!show);
 
     async function fetchUserList() {
         try {
@@ -20,6 +27,32 @@ function Admin() {
             setUserList(response.data)
             setFilteredUserList(response.data)
 
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function fetchAds() {
+        try {
+            const response = await axios.get("http://localhost:3090/api/advert/all")
+            setAds(response.data)
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+
+    async function addAdvert() {
+        try {
+            const response = await axios.post("http://localhost:3090/api/advert/add", { Title: adTitle, ImageLink: adImage, Description: adDescription })
+            if (response.data.insertID) {
+                setadShow(false)
+                fetchAds()
+            }
+            else {
+                alert("There was an error!")
+            }
         } catch (error) {
             console.error(error);
         }
@@ -35,7 +68,7 @@ function Admin() {
 
     async function banUnbanUser(id, type) {
         try {
-            const response = await axios.get("http://localhost:3090/api/ban", { params: { UserID: id, BanType: type } })
+            const response = await axios.get("http://localhost:3090/api/user/ban", { params: { UserID: id, BanType: type } })
             fetchUserList()
 
         } catch (error) {
@@ -43,9 +76,29 @@ function Admin() {
         }
     }
 
+    async function deleteUser(id) {
+        try {
+            const response = await axios.get("http://localhost:3090/api/user/delete/" + id)
+            fetchUserList()
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async function deleteAd(id) {
+        try {
+            const response = await axios.get("http://localhost:3090/api/advert/delete/" + id)
+            fetchAds()
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     async function updatePassword() {
         try {
-            const response = await axios.post("http://localhost:3090/api/updatepassword", { Password: password, ID: passwordChangeUserID })
+            const response = await axios.post("http://localhost:3090/api/user/updatepassword", { Password: password, ID: passwordChangeUserID })
             if (response.data.completed) {
                 fetchUserList()
                 setPassword('')
@@ -61,7 +114,13 @@ function Admin() {
 
     }
 
+
     useEffect(() => fetchUserList(), [])
+    useEffect(() => fetchAds(), [])
+
+    useEffect(() => {
+        if (localStorage.getItem('Role') !== "Admin") navigate("/")
+    }, [])
 
     return (
         <Container fluid="md" className="p-3">
@@ -81,6 +140,31 @@ function Admin() {
                 </ModalFooter>
             </Modal>
 
+
+            <Modal isOpen={adshow} backdrop='static' keyboard={false}>
+                <ModalHeader toggle={handleadModal}>
+                    New Advert
+                </ModalHeader>
+                <ModalBody>
+                    <FormGroup>
+                        <Label for="labeltitle">Title</Label>
+                        <Input type="text" id="title" placeholder="Title..." onChange={e => { setadTitle(e.target.value) }} />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="labeltitle">Image Link</Label>
+                        <Input type="text" id="imagelink" placeholder="Image..." onChange={e => { setadImage(e.target.value) }} />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="labeldescription">Description</Label>
+                        <Input type="text" id="description" placeholder="Description..." onChange={e => { setadDescription(e.target.value) }} />
+                    </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={addAdvert}>Create</Button>
+                </ModalFooter>
+            </Modal>
+
+            <h1 className="display-6">USERS</h1>
             <Row>
                 <Col>Search By Username<Input id='username' value={username} onChange={e => searchUsers(e.target.value)} /></Col>
             </Row>
@@ -96,6 +180,7 @@ function Admin() {
                             <th>Banned</th>
                             <th>Ban / Unban</th>
                             <th>Change Password</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,12 +195,40 @@ function Admin() {
                                 <td>{user.Banned === 1 ? 'True' : 'False'}</td>
                                 <td><button onClick={() => { user.Banned ? banUnbanUser(user.ID, 0) : banUnbanUser(user.ID, 1) }} className={user.Banned ? 'btn btn-success' : 'btn btn-danger'}>{user.Banned ? 'Unban' : 'Ban'}</button></td>
                                 <td><button onClick={() => { setPasswordChangeUserID(user.ID); setShow(true) }} className="btn btn-primary">Change</button></td>
+                                <td><button onClick={() => { deleteUser(user.ID) }} className="btn btn-secondary">Delete</button></td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
             </div>
+            <br />
+            <h1 className="display-6">Advertisements</h1>
+            <button className="btn btn-primary" onClick={() => { setadShow(true) }} >Create</button>
+            <div className='table-responsive'>
+                <Table hover>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>ImageLink</th>
+                            <th>Description</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
+                        {ads.map((ad, i) => (
+                            <tr key={i}>
+                                <td>{ad.ID}</td>
+                                <td>{ad.Title}</td>
+                                <td><Image className="img-thumbnail" style={{ width: 250 }} src={ad.ImageLink} rounded /></td>
+                                <td>{ad.Description}</td>
+                                <td><button onClick={() => { deleteAd(ad.ID) }} className="btn btn-secondary">Delete</button></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </div>
         </Container>
     )
 };
