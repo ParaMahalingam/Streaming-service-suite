@@ -19,7 +19,7 @@ function Admin() {
     const [adDescription, setadDescription] = useState('')
 
     const handleModal = () => setShow(!show);
-    const handleadModal = () => setadShow(!show);
+    const handleadModal = () => setadShow(!adshow);
 
     async function fetchUserList() {
         try {
