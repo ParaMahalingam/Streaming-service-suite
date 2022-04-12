@@ -12,6 +12,7 @@ function Home() {
     const [MovieSeriesSelect, setMovieSeriesSelect] = useState("Movie");
     const [PlatformSelect, setPlatformSelect] = useState("Netflix");
     const [show, setShow] = useState(false);
+    const [showWatchList, setShowWatchList] = useState(false);
     const [CurrentContent, setCurrentContent] = useState();
 
 
@@ -119,14 +120,16 @@ function Home() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={() => { addToWatchlist(CurrentContent.title, Object.keys(CurrentContent.streamingInfo)[0], CurrentContent.streamingInfo[Object.keys(CurrentContent.streamingInfo)[0]].gb.link, CurrentContent.posterURLs[500], CurrentContent.overview) }}>Add to Watchlist</Button>
+                    {showWatchList ? <Button variant="primary" onClick={() => { addToWatchlist(CurrentContent.title, Object.keys(CurrentContent.streamingInfo)[0], CurrentContent.streamingInfo[Object.keys(CurrentContent.streamingInfo)[0]].gb.link, CurrentContent.posterURLs[500], CurrentContent.overview) }}>Add to Watchlist</Button> : null}
                 </Modal.Footer>
             </Modal >
         );
     }
 
     useEffect(() => fetchResults(), [page]);
-
+    useEffect(() => {
+        if (localStorage.getItem('loggedIn')) setShowWatchList(true)
+    }, [])
     return (
         <Container className="p-3">
             <Row>

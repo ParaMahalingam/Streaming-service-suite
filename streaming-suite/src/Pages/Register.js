@@ -10,7 +10,6 @@ function Register() {
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [show, setShow] = useState(false);
 
 
 
@@ -25,7 +24,7 @@ function Register() {
                 navigate("/login");
             }
             else {
-                setShow(true);
+                alert("There was an error!")
             }
         } catch (error) {
             console.error(error);
@@ -39,7 +38,6 @@ function Register() {
         <Container className="p-3">
             <Row className="justify-content-center">
                 <Form className="col-md-4" onSubmit={handleSubmit}>
-                    <Alert show={show} variant='danger' className="text-center">You have entered an invalid username or password</Alert>
                     <h2>Register</h2>
                     <Form.Group className="mb-3">
                         <Form.Label>Name</Form.Label>
