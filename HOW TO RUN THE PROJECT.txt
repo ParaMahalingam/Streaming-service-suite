@@ -1,0 +1,14 @@
+Start the backend server
+Open CMD and then change the working directory to backend.
+
+1. Install the required modules using > npm install
+2. Start the backend server > npm start
+
+
+------------------------------------------------------------
+Start the frontend.
+Open another CMD, do not close the previous one! if closed the backend server will stop working.
+Once CMD is opened change the working directory to streaming-suite folder
+
+1. Install the required modules using > npm install
+2. Start the server > npm start
