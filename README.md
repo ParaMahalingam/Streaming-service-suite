@@ -6,13 +6,13 @@ Streaming Service Suite is a comprehensive platform designed to streamline the p
 
 ## Features
 
-- **Unified Search**: Developed using React Native and Expo, this application runs seamlessly on both iOS and Android devices, ensuring a consistent user experience across platforms.
-- **Service Compatibility**: Utilising React Native's AsyncStorage, this app securely stores your reading diary entries locally on your device, ensuring your data is always accessible even when offline.
+- **Unified Search**: Seamlessly search for movies and TV shows across multiple streaming platforms in one place.
+- **Service Compatibility**: Check availability on popular streaming services such as Netflix, Hulu, Amazon Prime Video, Disney+, and more.
 - **Responsive Frontend**: Developed using React to deliver a user-friendly and intuitive interface across devices.
 
 ## Getting Started
 
-To get started with the Reading Diary Cross-Platform Application, follow these steps:
+To get started with the Streaming Service Suite Application, follow these steps:
 
 1. **Clone the Repository**: Clone this repository to your local machine using the following command:
 
